@@ -1,0 +1,44 @@
+# OSX
+.DS_Store
+
+# Android/IntelliJ
+.idea
+.gradle
+local.properties
+*.iml
+*.hprof
+.cxx/
+*.keystore
+!debug.keystore
+
+# node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Xcode / iOS
+**/Pods/
+
+# Build
+build/
+*.jsbundle
+
+# Metro
+.metro-health-check*
+
+# Testing
+/coverage
+
+# Expo
+.expo
+dist/
+web-build/
+/android/app/release/
+
+# Secrets
+.env
+.env.local
+.env.*.local
+
+# Large binaries (managed via assets)
+android/app/src/main/assets/*/ollama
