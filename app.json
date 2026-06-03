@@ -1,0 +1,29 @@
+{
+  "name": "eburon-ai",
+  "displayName": "Eburon AI",
+  "expo": {
+    "name": "Eburon AI",
+    "slug": "eburon-ai",
+    "icon": "./assets/images/icon.png",
+    "android": {
+      "package": "ai.eburon.mobile",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#000000"
+      }
+    },
+    "ios": {
+      "bundleIdentifier": "ai.eburon.mobile"
+    },
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "backgroundColor": "#000000",
+          "imageWidth": 200
+        }
+      ]
+    ]
+  }
+}

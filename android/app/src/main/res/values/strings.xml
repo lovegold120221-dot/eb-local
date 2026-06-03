@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Eburon AI</string>
+    <string name="notification_title">Eburon AI is running locally</string>
+    <string name="notification_msg">Local AI service active on this device</string>
+    <string name="notification_channel">Eburon AI Service</string>
+</resources>
