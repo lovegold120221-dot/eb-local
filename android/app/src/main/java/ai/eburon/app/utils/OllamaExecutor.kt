@@ -149,6 +149,11 @@ class OllamaExecutor(private val context: Context) {
                 Thread { consumeProcessOutput(process) }.start()
             }
         } catch (e: Exception) {
+            val logDir = File(context.filesDir, "logs")
+            logDir.mkdirs()
+            File(logDir, "eburon-ollama-error.log").writeText(
+                "Failed to start Ollama: ${e.message}\n${e.stackTraceToString()}"
+            )
             e.printStackTrace()
             null
         }
