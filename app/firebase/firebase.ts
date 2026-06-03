@@ -1,26 +1,40 @@
-import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
+import {initializeApp, getApps} from 'firebase/app';
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+  User,
+} from 'firebase/auth';
 
-// Firebase project: loveme-495108
-// google-services.json must be placed in android/app/ from Firebase Console
-// Download from: Firebase Console > Project Settings > Your apps > Android app
+const firebaseConfig = {
+  apiKey: 'AIzaSyBVgaH3LduEQaKnkc2Zcdry-LxFT91NBDo',
+  authDomain: 'loveme-495108.firebaseapp.com',
+  projectId: 'loveme-495108',
+  storageBucket: 'loveme-495108.firebasestorage.app',
+  messagingSenderId: '836083160368',
+  appId: '1:836083160368:web:59fc8fdbab5ccdbb1564f5',
+};
 
-export {auth};
-export type User = FirebaseAuthTypes.User;
+const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
-export function onAuthStateChanged(
-  callback: (user: FirebaseAuthTypes.User | null) => void,
-): () => void {
-  return auth().onAuthStateChanged(callback);
+function signIn(email: string, password: string) {
+  return signInWithEmailAndPassword(auth, email, password);
 }
 
-export function signIn(email: string, password: string) {
-  return auth().signInWithEmailAndPassword(email, password);
+function createAccount(email: string, password: string) {
+  return createUserWithEmailAndPassword(auth, email, password);
 }
 
-export function createAccount(email: string, password: string) {
-  return auth().createUserWithEmailAndPassword(email, password);
+function signOutUser() {
+  return signOut(auth);
 }
 
-export function signOut() {
-  return auth().signOut();
+function onAuthChange(callback: (user: User | null) => void) {
+  return onAuthStateChanged(auth, callback);
 }
+
+export {auth, signIn, createAccount, signOutUser as signOut, onAuthChange as onAuthStateChanged};
+export type {User};
