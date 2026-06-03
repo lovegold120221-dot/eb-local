@@ -7,7 +7,7 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {StatusBar} from 'react-native';
 
 import {Material3ThemeProvider} from './theme/ThemeContext';
-import {AuthProvider, useAuth} from './auth/AuthProvider';
+import {AuthProvider, useAuth, LocalUser} from './auth/AuthProvider';
 import {useEburonBootstrap} from './bootstrap/useEburonBootstrap';
 
 import SplashScreen from './components/SplashScreen';

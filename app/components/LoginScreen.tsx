@@ -9,14 +9,22 @@ import {
   Platform,
   Alert,
 } from 'react-native';
-import {signIn, createAccount} from '../firebase/firebase';
+import {login, register, hasAccount} from '../auth/localAuth';
 import {useAppTheme} from '../theme/ThemeContext';
+import {useAuth} from '../auth/AuthProvider';
+import type {LocalUser} from '../auth/localAuth';
 
 export default function LoginScreen() {
   const theme = useAppTheme();
+  const {user: _, initializing: __} = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [hasExisting, setHasExisting] = useState<boolean | null>(null);
+
+  React.useEffect(() => {
+    hasAccount().then(setHasExisting);
+  }, []);
 
   async function handleLogin() {
     if (!email.trim() || !password.trim()) {
@@ -25,7 +33,8 @@ export default function LoginScreen() {
     }
     setLoading(true);
     try {
-      await signIn(email.trim(), password);
+      await login(email.trim(), password);
+      // AuthProvider will re-render with user
     } catch (e: any) {
       Alert.alert('Login Failed', e.message);
     } finally {
@@ -44,7 +53,8 @@ export default function LoginScreen() {
     }
     setLoading(true);
     try {
-      await createAccount(email.trim(), password);
+      await register(email.trim(), password);
+      // AuthProvider will re-render with user
     } catch (e: any) {
       Alert.alert('Registration Failed', e.message);
     } finally {
@@ -62,6 +72,9 @@ export default function LoginScreen() {
         </Text>
         <Text style={[styles.subtitle, {color: theme.colors.onSurface}]}>
           Welcome to Eburon AI
+        </Text>
+        <Text style={[styles.hint, {color: theme.colors.onSurface}]}>
+          Your account lives only on this device. No cloud, no tracking.
         </Text>
 
         <TextInput
@@ -105,68 +118,31 @@ export default function LoginScreen() {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.buttonSecondary]}
-          onPress={handleRegister}
-          disabled={loading}>
-          <Text style={[styles.buttonTextSecondary, {color: theme.colors.primary}]}>
-            Create Account
-          </Text>
-        </TouchableOpacity>
+        {!hasExisting && (
+          <TouchableOpacity
+            style={styles.buttonSecondary}
+            onPress={handleRegister}
+            disabled={loading}>
+            <Text
+              style={[styles.buttonTextSecondary, {color: theme.colors.primary}]}>
+              Create Account
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
     </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  inner: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 32,
-  },
-  title: {
-    fontSize: 36,
-    fontWeight: '800',
-    textAlign: 'center',
-    marginBottom: 8,
-    letterSpacing: 2,
-  },
-  subtitle: {
-    fontSize: 16,
-    textAlign: 'center',
-    marginBottom: 40,
-    opacity: 0.7,
-  },
-  input: {
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    fontSize: 16,
-    marginBottom: 16,
-  },
-  button: {
-    borderRadius: 12,
-    paddingVertical: 16,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  buttonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  buttonSecondary: {
-    borderRadius: 12,
-    paddingVertical: 16,
-    alignItems: 'center',
-    marginTop: 12,
-  },
-  buttonTextSecondary: {
-    fontSize: 14,
-    fontWeight: '500',
-  },
+  container: {flex: 1},
+  inner: {flex: 1, justifyContent: 'center', paddingHorizontal: 32},
+  title: {fontSize: 36, fontWeight: '800', textAlign: 'center', marginBottom: 8, letterSpacing: 2},
+  subtitle: {fontSize: 16, textAlign: 'center', marginBottom: 8, opacity: 0.7},
+  hint: {fontSize: 12, textAlign: 'center', marginBottom: 32, opacity: 0.5, lineHeight: 18},
+  input: {borderWidth: 1, borderRadius: 12, paddingHorizontal: 16, paddingVertical: 14, fontSize: 16, marginBottom: 16},
+  button: {borderRadius: 12, paddingVertical: 16, alignItems: 'center', marginTop: 8},
+  buttonText: {color: '#FFFFFF', fontSize: 16, fontWeight: '600'},
+  buttonSecondary: {borderRadius: 12, paddingVertical: 16, alignItems: 'center', marginTop: 12},
+  buttonTextSecondary: {fontSize: 14, fontWeight: '500'},
 });

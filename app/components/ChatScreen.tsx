@@ -16,11 +16,12 @@ import {EBURON_MODEL} from '../constants/eburon';
 import {useAppTheme} from '../theme/ThemeContext';
 import type {Message, ChatResponse, ChatSessionType} from '../model/Chat';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {signOut} from '../firebase/firebase';
+import {useAuth} from '../auth/AuthProvider';
 
 export default function ChatScreen() {
   const theme = useAppTheme();
   const insets = useSafeAreaInsets();
+  const {logout} = useAuth();
   const [message, setMessage] = useState('');
   const [chatting, setChatting] = useState(false);
   const messagesRef = useRef<Message[]>([]);
@@ -28,6 +29,10 @@ export default function ChatScreen() {
   const flatListRef = useRef<FlatList<Message>>(null);
   const [, forceUpdate] = useState({});
   const conversationId = useRef(uuidv4());
+
+  function handleLogout() {
+    logout();
+  }
 
   function handleSend() {
     if (chatting) {
@@ -42,7 +47,6 @@ export default function ChatScreen() {
     messagesRef.current = [...messagesRef.current, userMsg];
     forceUpdate({});
     setMessage('');
-
     let addedAssistantMessage = false;
 
     chatSessionRef.current = chat(
@@ -72,20 +76,10 @@ export default function ChatScreen() {
     });
   }
 
-  async function handleLogout() {
-    try {
-      await signOut();
-    } catch {}
-  }
-
   function renderMessage({item}: {item: Message}) {
     const isUser = item.role === 'user';
     return (
-      <View
-        style={[
-          styles.messageRow,
-          isUser ? styles.userRow : styles.botRow,
-        ]}>
+      <View style={[styles.messageRow, isUser ? styles.userRow : styles.botRow]}>
         <View
           style={[
             styles.messageBubble,
@@ -118,33 +112,18 @@ export default function ChatScreen() {
           </Text>
         </TouchableOpacity>
       </View>
-
       <FlatList
         ref={flatListRef}
         data={messagesRef.current}
         renderItem={renderMessage}
         keyExtractor={(_, i) => String(i)}
         contentContainerStyle={styles.messageList}
-        onContentSizeChange={() =>
-          flatListRef.current?.scrollToEnd({animated: true})
-        }
+        onContentSizeChange={() => flatListRef.current?.scrollToEnd({animated: true})}
       />
-
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <View
-          style={[
-            styles.inputBar,
-            {backgroundColor: theme.colors.surface, borderTopColor: theme.colors.surfaceVariant},
-          ]}>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <View style={[styles.inputBar, {backgroundColor: theme.colors.surface, borderTopColor: theme.colors.surfaceVariant}]}>
           <TextInput
-            style={[
-              styles.textInput,
-              {
-                backgroundColor: theme.colors.background,
-                color: theme.colors.onSurface,
-              },
-            ]}
+            style={[styles.textInput, {backgroundColor: theme.colors.background, color: theme.colors.onSurface}]}
             placeholder="Message Eburon Max..."
             placeholderTextColor="#888"
             value={message}
@@ -152,14 +131,9 @@ export default function ChatScreen() {
             multiline
           />
           <TouchableOpacity
-            style={[
-              styles.sendButton,
-              {backgroundColor: chatting ? theme.colors.error : theme.colors.primary},
-            ]}
+            style={[styles.sendButton, {backgroundColor: chatting ? theme.colors.error : theme.colors.primary}]}
             onPress={handleSend}>
-            <Text style={styles.sendText}>
-              {chatting ? 'Stop' : 'Send'}
-            </Text>
+            <Text style={styles.sendText}>{chatting ? 'Stop' : 'Send'}</Text>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -169,67 +143,17 @@ export default function ChatScreen() {
 
 const styles = StyleSheet.create({
   container: {flex: 1},
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-  },
-  logoutButton: {
-    position: 'absolute',
-    right: 16,
-  },
-  logoutText: {
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  messageList: {
-    padding: 12,
-    flexGrow: 1,
-  },
-  messageRow: {
-    marginVertical: 4,
-  },
-  userRow: {
-    alignItems: 'flex-end',
-  },
-  botRow: {
-    alignItems: 'flex-start',
-  },
-  messageBubble: {
-    maxWidth: '80%',
-    padding: 12,
-    borderRadius: 16,
-    borderBottomRightRadius: 4,
-  },
-  inputBar: {
-    flexDirection: 'row',
-    padding: 12,
-    borderTopWidth: 1,
-    alignItems: 'flex-end',
-  },
-  textInput: {
-    flex: 1,
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    fontSize: 15,
-    maxHeight: 100,
-    marginRight: 8,
-  },
-  sendButton: {
-    borderRadius: 20,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-  sendText: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 14,
-  },
+  header: {flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 14, borderBottomWidth: 1},
+  headerTitle: {fontSize: 18, fontWeight: '700'},
+  logoutButton: {position: 'absolute', right: 16},
+  logoutText: {fontSize: 14, fontWeight: '500'},
+  messageList: {padding: 12, flexGrow: 1},
+  messageRow: {marginVertical: 4},
+  userRow: {alignItems: 'flex-end'},
+  botRow: {alignItems: 'flex-start'},
+  messageBubble: {maxWidth: '80%', padding: 12, borderRadius: 16},
+  inputBar: {flexDirection: 'row', padding: 12, borderTopWidth: 1, alignItems: 'flex-end'},
+  textInput: {flex: 1, borderRadius: 20, paddingHorizontal: 16, paddingVertical: 10, fontSize: 15, maxHeight: 100, marginRight: 8},
+  sendButton: {borderRadius: 20, paddingHorizontal: 20, paddingVertical: 10},
+  sendText: {color: '#fff', fontWeight: '600', fontSize: 14},
 });

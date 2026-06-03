@@ -3,7 +3,7 @@ import {NativeModules} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {EBURON_MODEL, OLLAMA_SERVER} from '../constants/eburon';
 import {tags, pull} from '../api/OllamaApi';
-import type {User} from '../firebase/firebase';
+import type {LocalUser} from '../auth/AuthProvider';
 
 const {OllamaServiceModule} = NativeModules;
 
@@ -46,7 +46,7 @@ async function isEburonModelInstalled(): Promise<boolean> {
   );
 }
 
-export function useEburonBootstrap(user: User | null) {
+export function useEburonBootstrap(user: LocalUser | null) {
   const [status, setStatus] = useState<BootstrapStatus>('idle');
   const [progress, setProgress] = useState(0);
   const [message, setMessage] = useState('');
@@ -58,7 +58,7 @@ export function useEburonBootstrap(user: User | null) {
     if (!user || hasStartedRef.current) return;
     hasStartedRef.current = true;
 
-    const storageKey = `eburon-model-ready:${user.uid}:${EBURON_MODEL}`;
+    const storageKey = `eburon-model-ready:${user.email}:${EBURON_MODEL}`;
 
     async function run() {
       try {

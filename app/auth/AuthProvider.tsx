@@ -1,25 +1,37 @@
-import React, {createContext, useEffect, useState, useContext} from 'react';
-import {onAuthStateChanged, User} from '../firebase/firebase';
+import React, {createContext, useEffect, useState, useContext, useCallback} from 'react';
+import {getCurrentUser} from './localAuth';
+import type {LocalUser} from './localAuth';
+
+export type {LocalUser};
 
 export const AuthContext = createContext<{
-  user: User | null;
+  user: LocalUser | null;
   initializing: boolean;
-}>({user: null, initializing: true});
+  logout: () => void;
+}>({user: null, initializing: true, logout: () => {}});
 
 export function AuthProvider({children}: {children: React.ReactNode}) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<LocalUser | null>(null);
   const [initializing, setInitializing] = useState(true);
+  const [tick, setTick] = useState(0);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(nextUser => {
-      setUser(nextUser);
-      setInitializing(false);
-    });
-    return unsubscribe;
+    getCurrentUser()
+      .then(stored => {
+        if (stored) setUser(stored);
+        else setUser(null);
+      })
+      .catch(() => setUser(null))
+      .finally(() => setInitializing(false));
+  }, [tick]);
+
+  const logout = useCallback(() => {
+    setUser(null);
+    setTick(t => t + 1);
   }, []);
 
   return (
-    <AuthContext.Provider value={{user, initializing}}>
+    <AuthContext.Provider value={{user, initializing, logout}}>
       {children}
     </AuthContext.Provider>
   );
