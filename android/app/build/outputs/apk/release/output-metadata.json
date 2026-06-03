@@ -4,7 +4,7 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "ai.eburon.mobile",
+  "applicationId": "ai.eburon.app",
   "variantName": "release",
   "elements": [
     {
