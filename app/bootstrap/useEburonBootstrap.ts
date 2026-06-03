@@ -76,7 +76,15 @@ export function useEburonBootstrap(user: User | null) {
           await AsyncStorage.setItem(storageKey, 'true');
           setStatus('ready');
           setProgress(1);
-          setMessage('Eburon Max is ready.');
+        setMessage('Eburon Max is ready.');
+        try {
+          OllamaServiceModule.updateNotification(
+            'Eburon AI',
+            'Eburon Max is ready',
+            0,
+            0,
+          );
+        } catch {} // best-effort
           return;
         }
 
@@ -90,7 +98,18 @@ export function useEburonBootstrap(user: User | null) {
             typeof r.total === 'number' &&
             r.total > 0
           ) {
-            setProgress(r.completed / r.total);
+            const pct = r.completed / r.total;
+            setProgress(pct);
+            try {
+              OllamaServiceModule.updateNotification(
+                'Downloading Eburon Max',
+                `${Math.round(pct * 100)}% — ${r.status || 'Downloading...'}`,
+                r.completed,
+                r.total,
+              );
+            } catch {
+              // notification update is best-effort
+            }
           }
         });
         abortRef.current = session.abort;

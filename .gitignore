@@ -39,6 +39,3 @@ web-build/
 .env
 .env.local
 .env.*.local
-
-# Large binaries (managed via assets)
-android/app/src/main/assets/*/ollama

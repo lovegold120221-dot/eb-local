@@ -16,8 +16,7 @@ import {EBURON_MODEL} from '../constants/eburon';
 import {useAppTheme} from '../theme/ThemeContext';
 import type {Message, ChatResponse, ChatSessionType} from '../model/Chat';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {auth} from '../firebase/firebase';
-import {signOut} from 'firebase/auth';
+import {signOut} from '../firebase/firebase';
 
 export default function ChatScreen() {
   const theme = useAppTheme();
@@ -75,7 +74,7 @@ export default function ChatScreen() {
 
   async function handleLogout() {
     try {
-      await signOut(auth);
+      await signOut();
     } catch {}
   }
 

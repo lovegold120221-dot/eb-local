@@ -9,11 +9,7 @@ import {
   Platform,
   Alert,
 } from 'react-native';
-import {auth} from '../firebase/firebase';
-import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-} from 'firebase/auth';
+import {signIn, createAccount} from '../firebase/firebase';
 import {useAppTheme} from '../theme/ThemeContext';
 
 export default function LoginScreen() {
@@ -29,7 +25,7 @@ export default function LoginScreen() {
     }
     setLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, email.trim(), password);
+      await signIn(email.trim(), password);
     } catch (e: any) {
       Alert.alert('Login Failed', e.message);
     } finally {
@@ -48,7 +44,7 @@ export default function LoginScreen() {
     }
     setLoading(true);
     try {
-      await createUserWithEmailAndPassword(auth, email.trim(), password);
+      await createAccount(email.trim(), password);
     } catch (e: any) {
       Alert.alert('Registration Failed', e.message);
     } finally {

@@ -21,4 +21,14 @@ class OllamaServiceModule(private val reactContext: ReactApplicationContext) :
     fun stopService() {
         reactContext.stopService(intent)
     }
+
+    @ReactMethod
+    fun updateNotification(title: String, text: String, progress: Double, progressMax: Double) {
+        OllamaService.instance?.updateNotification(
+            title,
+            text,
+            progress.toInt(),
+            progressMax.toInt()
+        )
+    }
 }

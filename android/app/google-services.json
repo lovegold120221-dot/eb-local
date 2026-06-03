@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "836083160368",
+    "project_id": "loveme-495108",
+    "storage_bucket": "loveme-495108.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:836083160368:android:59fc8fdbab5ccdbb1564f5",
+        "android_client_info": {
+          "package_name": "ai.eburon.mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVgaH3LduEQaKnkc2Zcdry-LxFT91NBDo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

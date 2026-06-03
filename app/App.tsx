@@ -1,5 +1,6 @@
-import React, {useCallback} from 'react';
+import React from 'react';
 import 'react-native-gesture-handler';
+import './i18n/i18next';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
